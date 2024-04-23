@@ -76,14 +76,8 @@ BEFORE INSERT ON contacts1
 FOR EACH ROW
 BEGIN
    DECLARE vUser VARCHAR(50);
-   
-   -- Find username of person performing INSERT into table
    SELECT USER() INTO vUser;
-   
-   -- Update created_date field to current system date
    SET NEW.created_date = SYSDATE();
-   
-   -- Update created_by field to the username of the person performing the INSERT
    SET NEW.created_by = vUser;
 END; //
 DELIMITER ;
@@ -114,11 +108,7 @@ AFTER INSERT ON contacts2
 FOR EACH ROW
 BEGIN
    DECLARE vUser VARCHAR(50);
-
-   -- Find username of person performing the INSERT into table
    SELECT USER() INTO vUser;
-
-   -- Insert record into audit table
    INSERT INTO contacts2_audit
    (contact_id,
     created_date,
@@ -157,11 +147,7 @@ BEFORE DELETE ON contacts3
 FOR EACH ROW
 BEGIN
    DECLARE vUser VARCHAR(50);
-   
-   -- Find username of person performing the DELETE from table
    SELECT USER() INTO vUser;
-   
-   -- Insert record into audit table
    INSERT INTO contacts3_audit
    (contact_id,
     deleted_date,
@@ -176,6 +162,7 @@ DELIMITER ;
 INSERT INTO contacts3 (last_name, first_name, birthday, created_date, created_by)
 VALUES ('Bond', 'Ruskin', STR_TO_DATE('19-08-1995', '%d-%m-%Y'), STR_TO_DATE('27-04-2018', '%d-%m-%Y'), 'xyz');
 
+-- safe mode issue
 DELETE FROM contacts3 WHERE last_name = 'Bond';
 
 select *from contacts3_audit;
